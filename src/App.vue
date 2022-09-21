@@ -13,6 +13,7 @@
               <div class="mt-1 relative rounded-md shadow-md">
                 <input
                   v-model="ticker"
+                  @keydown.enter="add"
                   type="text"
                   name="wallet"
                   id="wallet"
@@ -24,24 +25,28 @@
                 class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap"
               >
                 <span
+                  @click="add('BTC')"
                   class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
                 >
                   BTC
                 </span>
                 <span
+                  @click="add('DOGE')"
                   class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
                 >
                   DOGE
                 </span>
                 <span
+                  @click="add('BCH')"
                   class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
                 >
                   BCH
                 </span>
                 <span
+                  @click="add('ASD')"
                   class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
                 >
-                  CHD
+                  ASD
                 </span>
               </div>
               <div class="text-sm text-red-600">Такой тикер уже добавлен</div>
@@ -74,17 +79,23 @@
             <div
               v-for="t in tickers"
               :key="t.ticker"
+              @click="select(t)"
+              :class="{
+                'border-4': sel === t,
+              }"
               class="bg-white overflow-hidden shadow rounded-lg border-purple-800 border-solid cursor-pointer"
             >
               <div class="px-4 py-5 sm:p-6 text-center">
                 <dt class="text-sm font-medium text-gray-500 truncate">
                   {{ t.ticker }} - USD
                 </dt>
-                <dd class="mt-1 text-3xl font-semibold text-gray-900">1.11</dd>
+                <dd class="mt-1 text-3xl font-semibold text-gray-900">
+                  {{ t.price }}
+                </dd>
               </div>
               <div class="w-full border-t border-gray-200"></div>
               <button
-                @click="remove(t.ticker)"
+                @click.stop="remove(t.ticker)"
                 class="flex items-center justify-center font-medium w-full bg-gray-100 px-4 py-4 sm:px-6 text-md text-gray-500 hover:text-gray-600 hover:bg-gray-200 hover:opacity-20 transition-all focus:outline-none"
               >
                 <svg
@@ -105,17 +116,23 @@
           </dl>
           <hr class="w-full border-t border-gray-600 my-4" />
         </template>
-        <section class="relative">
+        <section v-if="sel" class="relative">
           <h3 class="text-lg leading-6 font-medium text-gray-900 my-8">
-            VUE - USD
+            {{ sel.ticker }} - USD
           </h3>
           <div class="flex items-end border-gray-600 border-b border-l h-64">
-            <div class="bg-purple-800 border w-10 h-24"></div>
-            <div class="bg-purple-800 border w-10 h-32"></div>
-            <div class="bg-purple-800 border w-10 h-48"></div>
-            <div class="bg-purple-800 border w-10 h-16"></div>
+            <div
+              v-for="(bar, i) in normalizeGraph()"
+              :key="i"
+              :style="{ height: `${bar}%` }"
+              class="bg-purple-800 border w-10"
+            ></div>
           </div>
-          <button type="button" class="absolute top-0 right-0">
+          <button
+            type="button"
+            class="absolute top-0 right-0"
+            @click="sel = null"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -150,20 +167,49 @@ export default {
 
   data() {
     return {
-      ticker: "default",
+      ticker: "",
       tickers: [],
+      sel: null,
+      graph: [],
     };
   },
 
   methods: {
-    add() {
-      this.tickers.push({ ticker: this.ticker });
+    add(cripto) {
+      const currentTicker = { ticker: this.ticker || cripto, price: "-" };
+      this.tickers.push(currentTicker);
+      setInterval(async () => {
+        const f = await fetch(
+          `https://min-api.cryptocompare.com/data/price?fsym=${currentTicker.ticker}&tsyms=USD&api_key=d9308bc5b23f6b92c0115e0fd9ea42ecc54cf8b66f23b830359de2773609a84a`,
+        );
+
+        const data = await f.json();
+
+        this.tickers.find((t) => t.ticker === currentTicker.ticker).price =
+          data.USD > 1 ? data.USD.toFixed(2) : data.USD.toPrecision(2);
+
+        if (this.sel.ticker === currentTicker.ticker) {
+          this.graph.push(data.USD);
+        }
+      }, 3000);
+
+      this.ticker = "";
     },
+
     remove(elem) {
-      this.tickers = this.tickers.filter((item) => {
-        console.log(item.ticker);
-        console.log(elem);
-        item.ticker !== elem;
+      this.tickers = this.tickers.filter((item) => item.ticker !== elem);
+    },
+
+    select(ticker) {
+      this.sel = ticker;
+      this.graph = [];
+    },
+
+    normalizeGraph() {
+      const maxValue = Math.max(...this.graph);
+      const minValue = Math.min(...this.graph);
+      return this.graph.map((price) => {
+        return 5 + ((price - minValue) * 95) / (maxValue - minValue);
       });
     },
   },
