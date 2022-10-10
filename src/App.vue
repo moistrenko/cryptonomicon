@@ -34,24 +34,6 @@
                 >
                   {{ item }}
                 </span>
-                <!-- <span
-                  @click="add('DOGE')"
-                  class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
-                >
-                  DOGE
-                </span>
-                <span
-                  @click="add('BCH')"
-                  class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
-                >
-                  BCH
-                </span>
-                <span
-                  @click="add('ASD')"
-                  class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
-                >
-                  ASD
-                </span> -->
               </div>
               <div v-if="tickerInclude" class="text-sm text-red-600">
                 Такой тикер уже добавлен
@@ -81,9 +63,28 @@
         </section>
         <template v-if="tickers.length">
           <hr class="w-full border-t border-gray-600 my-4" />
+          <div>
+            <button
+              v-if="page > 1"
+              class="my-4 mx-2 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              @click="page = page - 1"
+            >
+              Назад
+            </button>
+            <button
+              class="my-4 mx-2 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              @click="page = page + 1"
+            >
+              Вперед
+            </button>
+            <div>
+              <input v-model="filter" />
+            </div>
+          </div>
+          <hr class="w-full border-t border-gray-600 my-4" />
           <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
             <div
-              v-for="t in tickers"
+              v-for="t in filteredTickers()"
               :key="t.ticker"
               @click="select(t)"
               :class="{
@@ -180,6 +181,8 @@ export default {
       coinsList: {},
       coinsFiltered: [],
       tickerInclude: false,
+      page: 1,
+      filter: "",
     };
   },
   created: function () {
@@ -199,6 +202,14 @@ export default {
       });
   },
   methods: {
+    filteredTickers() {
+      const start = (this.page - 1) * 6;
+      const end = this.page * 6;
+      return this.tickers
+        .filter((ticker) => ticker.ticker.includes(this.filter))
+        .slice(start, end);
+    },
+
     subscribeToUpdate(tickerName) {
       setInterval(async () => {
         const f = await fetch(
@@ -226,6 +237,8 @@ export default {
       localStorage.setItem("cryptonomicon-list", JSON.stringify(this.tickers));
 
       this.subscribeToUpdate(currentTicker.ticker);
+
+      this.filter = "";
     },
 
     remove(elem) {
