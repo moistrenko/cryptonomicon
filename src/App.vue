@@ -13,6 +13,7 @@
               <div class="mt-1 relative rounded-md shadow-md">
                 <input
                   v-model="ticker"
+                  @input="coinsFilter"
                   @keydown.enter="add"
                   type="text"
                   name="wallet"
@@ -22,15 +23,18 @@
                 />
               </div>
               <div
+                v-if="coinsFiltered.length"
                 class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap"
               >
                 <span
-                  @click="add('BTC')"
+                  v-for="item in coinsFiltered.slice(0, 4)"
+                  :key="item"
+                  @click="add(item)"
                   class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
                 >
-                  BTC
+                  {{ item }}
                 </span>
-                <span
+                <!-- <span
                   @click="add('DOGE')"
                   class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
                 >
@@ -47,9 +51,11 @@
                   class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
                 >
                   ASD
-                </span>
+                </span> -->
               </div>
-              <div class="text-sm text-red-600">Такой тикер уже добавлен</div>
+              <div v-if="tickerInclude" class="text-sm text-red-600">
+                Такой тикер уже добавлен
+              </div>
             </div>
           </div>
           <button
@@ -171,9 +177,18 @@ export default {
       tickers: [],
       sel: null,
       graph: [],
+      coinsList: {},
+      coinsFiltered: [],
+      tickerInclude: false,
     };
   },
-
+  created: function () {
+    fetch("https://min-api.cryptocompare.com/data/all/coinlist?summary=true")
+      .then((res) => res.json())
+      .then((data) => {
+        this.coinsList = data.Data;
+      });
+  },
   methods: {
     add(cripto) {
       const currentTicker = { ticker: this.ticker || cripto, price: "-" };
@@ -188,7 +203,7 @@ export default {
         this.tickers.find((t) => t.ticker === currentTicker.ticker).price =
           data.USD > 1 ? data.USD.toFixed(2) : data.USD.toPrecision(2);
 
-        if (this.sel.ticker === currentTicker.ticker) {
+        if (this.sel && this.sel.ticker === currentTicker.ticker) {
           this.graph.push(data.USD);
         }
       }, 3000);
@@ -211,6 +226,15 @@ export default {
       return this.graph.map((price) => {
         return 5 + ((price - minValue) * 95) / (maxValue - minValue);
       });
+    },
+    coinsFilter() {
+      this.coinsFiltered = Object.keys(this.coinsList).filter((coin) =>
+        coin.toLowerCase().includes(this.ticker.toLowerCase()),
+      );
+
+      this.tickerInclude = this.tickers
+        .map((item) => item.ticker)
+        .includes(this.ticker);
     },
   },
 };
