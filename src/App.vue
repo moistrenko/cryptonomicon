@@ -25,7 +25,7 @@
               </div>
               <div
                 v-if="coinsFiltered.length"
-                class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap"
+                class="flex bg-white shadow-md p-1 rounded-md flex-wrap"
               >
                 <span
                   v-for="item in coinsFiltered.slice(0, 4)"
@@ -36,7 +36,10 @@
                   {{ item }}
                 </span>
               </div>
-              <div v-if="tickerInclude" class="text-sm text-red-600">
+              <div
+                v-if="tickerInclude"
+                class="text-sm text-red-600"
+              >
                 Такой тикер уже добавлен
               </div>
             </div>
@@ -57,7 +60,7 @@
             >
               <path
                 d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
-              ></path>
+              />
             </svg>
             Добавить
           </button>
@@ -126,7 +129,10 @@
           </dl>
           <hr class="w-full border-t border-gray-600 my-4" />
         </template>
-        <section v-if="sel" class="relative">
+        <section
+          v-if="sel"
+          class="relative"
+        >
           <h3 class="text-lg leading-6 font-medium text-gray-900 my-8">
             {{ sel.ticker }} - USD
           </h3>
@@ -173,11 +179,11 @@
 
 <script>
 export default {
-  name: "App",
+  name: 'App',
 
   data() {
     return {
-      ticker: "",
+      ticker: '',
       tickers: [],
       sel: null,
       graph: [],
@@ -185,13 +191,13 @@ export default {
       coinsFiltered: [],
       tickerInclude: false,
       page: 1,
-      filter: "",
+      filter: '',
       hasNextPage: false,
     };
   },
   created: function () {
     const windowData = Object.fromEntries(
-      new URL(window.location).searchParams.entries(),
+      new URL(window.location).searchParams.entries()
     );
 
     if (windowData.filter) {
@@ -202,7 +208,7 @@ export default {
       this.page = windowData.page;
     }
 
-    const tickersData = localStorage.getItem("cryptonomicon-list");
+    const tickersData = localStorage.getItem('cryptonomicon-list');
 
     if (tickersData) {
       this.tickers = JSON.parse(tickersData);
@@ -211,7 +217,7 @@ export default {
       });
     }
 
-    fetch("https://min-api.cryptocompare.com/data/all/coinlist?summary=true")
+    fetch('https://min-api.cryptocompare.com/data/all/coinlist?summary=true')
       .then((res) => res.json())
       .then((data) => {
         this.coinsList = data.Data;
@@ -223,7 +229,7 @@ export default {
       const end = this.page * 6;
 
       const filterTickers = this.tickers.filter((ticker) =>
-        ticker.ticker.includes(this.filter),
+        ticker.ticker.includes(this.filter)
       );
 
       this.hasNextPage = filterTickers.length > end;
@@ -234,7 +240,7 @@ export default {
     subscribeToUpdate(tickerName) {
       setInterval(async () => {
         const f = await fetch(
-          `https://min-api.cryptocompare.com/data/price?fsym=${tickerName}&tsyms=USD&api_key=d9308bc5b23f6b92c0115e0fd9ea42ecc54cf8b66f23b830359de2773609a84a`,
+          `https://min-api.cryptocompare.com/data/price?fsym=${tickerName}&tsyms=USD&api_key=d9308bc5b23f6b92c0115e0fd9ea42ecc54cf8b66f23b830359de2773609a84a`
         );
 
         const data = await f.json();
@@ -247,19 +253,19 @@ export default {
         }
       }, 3000);
 
-      this.ticker = "";
+      this.ticker = '';
     },
 
     add(cripto) {
-      const currentTicker = { ticker: this.ticker || cripto, price: "-" };
+      const currentTicker = { ticker: this.ticker || cripto, price: '-' };
 
       this.tickers.push(currentTicker);
 
-      localStorage.setItem("cryptonomicon-list", JSON.stringify(this.tickers));
+      localStorage.setItem('cryptonomicon-list', JSON.stringify(this.tickers));
 
       this.subscribeToUpdate(currentTicker.ticker);
 
-      this.filter = "";
+      this.filter = '';
     },
 
     remove(elem) {
@@ -280,7 +286,7 @@ export default {
     },
     coinsFilter() {
       this.coinsFiltered = Object.keys(this.coinsList).filter((coin) =>
-        coin.toLowerCase().includes(this.ticker.toLowerCase()),
+        coin.toLowerCase().includes(this.ticker.toLowerCase())
       );
 
       this.tickerInclude = this.tickers
@@ -296,14 +302,14 @@ export default {
       history.pushState(
         null,
         document.title,
-        `${window.location.pathname}?filter=${this.filter}&page=${this.page}`,
+        `${window.location.pathname}?filter=${this.filter}&page=${this.page}`
       );
     },
     page() {
       history.pushState(
         null,
         document.title,
-        `${window.location.pathname}?filter=${this.filter}&page=${this.page}`,
+        `${window.location.pathname}?filter=${this.filter}&page=${this.page}`
       );
     },
   },
