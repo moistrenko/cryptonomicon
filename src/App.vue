@@ -222,8 +222,6 @@ export default {
       });
     }
 
-    setInterval(this.updateTickers, 3000);
-
     fetch('https://min-api.cryptocompare.com/data/all/coinlist?summary=true')
       .then((res) => res.json())
       .then((data) => {
@@ -277,7 +275,12 @@ export default {
     updateTicker(tickerName, price) {
       this.tickers
         .filter((t) => t.ticker === tickerName)
-        .forEach((t) => (t.price = price));
+        .forEach((t) => {
+          if (t === this.selectedTicker) {
+            this.graph.push(price);
+          }
+          t.price = price;
+        });
     },
 
     formatedPrice(price) {
@@ -288,18 +291,8 @@ export default {
       return price > 1 ? price.toFixed(2) : price.toPrecision(2);
     },
 
-    async updateTickers() {
-      // if (!this.tickers.length) {
-      //   return;
-      // }
-      // this.tickers.forEach((t) => {
-      //   const price = exchangeData[t.ticker.toUpperCase()];
-      //   t.price = price ?? '-';
-      // });
-    },
-
-    add(cripto) {
-      const currentTicker = { ticker: this.ticker || cripto, price: '-' };
+    add(crypto = this.ticker) {
+      const currentTicker = { ticker: crypto, price: '-' };
 
       this.tickers = [...this.tickers, currentTicker];
 
@@ -316,11 +309,13 @@ export default {
         (item) => item.ticker !== tickerToRemove,
       );
 
-      if (this.selectedTicker.ticker === tickerToRemove) {
+      if (
+        this.selectedTicker &&
+        this.selectedTicker.ticker === tickerToRemove
+      ) {
         this.selectedTicker = null;
       }
-
-      unsubscribeFromTicker(tickerToRemove.ticker);
+      unsubscribeFromTicker(tickerToRemove);
     },
 
     select(ticker) {
