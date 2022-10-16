@@ -32,7 +32,7 @@
                 <span
                   v-for="item in coinsFiltered.slice(0, 4)"
                   :key="item"
-                  @click="add(item)"
+                  @click="addedTicker(item)"
                   class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
                 >
                   {{ item }}
@@ -180,7 +180,7 @@
 </template>
 
 <script>
-import { subscribeToTicker, unsubscribeFromTicker } from './api';
+import { subscribeToTicker, unsubscribeFromTicker, getCoinsList } from './api';
 
 export default {
   name: 'App',
@@ -222,11 +222,9 @@ export default {
       });
     }
 
-    fetch('https://min-api.cryptocompare.com/data/all/coinlist?summary=true')
-      .then((res) => res.json())
-      .then((data) => {
-        this.coinsList = data.Data;
-      });
+    getCoinsList().then((data) => {
+      this.coinsList = data.Data;
+    });
   },
   computed: {
     startIndex() {
@@ -291,13 +289,23 @@ export default {
       return price > 1 ? price.toFixed(2) : price.toPrecision(2);
     },
 
-    add(crypto = this.ticker) {
-      const currentTicker = { ticker: crypto, price: '-' };
+    addedTicker(ticker) {
+      this.ticker = ticker;
+      this.add();
+    },
+
+    add() {
+      if (this.tickerInclude || !this.ticker) {
+        return;
+      }
+
+      const currentTicker = { ticker: this.ticker, price: '-' };
 
       this.tickers = [...this.tickers, currentTicker];
 
       this.filter = '';
       this.ticker = '';
+      this.coinsFiltered = [];
 
       subscribeToTicker(currentTicker.ticker, (newPrice) => {
         this.updateTicker(currentTicker.ticker, newPrice);
@@ -328,8 +336,8 @@ export default {
       );
 
       this.tickerInclude = this.tickers
-        .map((item) => item.ticker)
-        .includes(this.ticker);
+        .map((item) => item.ticker.toLowerCase())
+        .includes(this.ticker.toLowerCase());
     },
   },
 

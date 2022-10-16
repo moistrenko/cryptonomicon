@@ -64,3 +64,9 @@ export const unsubscribeFromTicker = (ticker) => {
 
   subsOrUnsubsToTicker(ticker, true);
 };
+
+export const getCoinsList = () => {
+  return fetch(
+    'https://min-api.cryptocompare.com/data/all/coinlist?summary=true',
+  ).then((res) => res.json());
+};
