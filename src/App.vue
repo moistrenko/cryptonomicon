@@ -96,6 +96,7 @@
               @click="select(t)"
               :class="{
                 'border-4': selectedTicker === t,
+                'bg-red-800': t.status === 'error',
               }"
               class="bg-white overflow-hidden shadow rounded-lg border-purple-800 border-solid cursor-pointer"
             >
@@ -138,7 +139,10 @@
           <h3 class="text-lg leading-6 font-medium text-gray-900 my-8">
             {{ selectedTicker.ticker }} - USD
           </h3>
-          <div class="flex items-end border-gray-600 border-b border-l h-64">
+          <div
+            class="flex items-end border-gray-600 border-b border-l h-64"
+            ref="graph"
+          >
             <div
               v-for="(bar, i) in normalizedGraph"
               :key="i"
@@ -216,8 +220,8 @@ export default {
     if (tickersData) {
       this.tickers = JSON.parse(tickersData);
       this.tickers.forEach((ticker) => {
-        subscribeToTicker(ticker.ticker, (newPrice) => {
-          this.updateTicker(ticker.ticker, newPrice);
+        subscribeToTicker(ticker.ticker, (newPrice, status) => {
+          this.updateTicker(ticker.ticker, newPrice, status);
         });
       });
     }
@@ -270,20 +274,25 @@ export default {
     },
   },
   methods: {
-    updateTicker(tickerName, price) {
+    updateTicker(tickerName, price, status) {
       this.tickers
         .filter((t) => t.ticker === tickerName)
         .forEach((t) => {
           if (t === this.selectedTicker) {
             this.graph.push(price);
+
+            if (this.graph.length > 10) {
+              this.graph.shift();
+            }
           }
           t.price = price;
+          t.status = status;
         });
     },
 
     formatedPrice(price) {
-      if (price === '-') {
-        return price;
+      if (!price || price === '-') {
+        return '-';
       }
 
       return price > 1 ? price.toFixed(2) : price.toPrecision(2);
@@ -307,8 +316,8 @@ export default {
       this.ticker = '';
       this.coinsFiltered = [];
 
-      subscribeToTicker(currentTicker.ticker, (newPrice) => {
-        this.updateTicker(currentTicker.ticker, newPrice);
+      subscribeToTicker(currentTicker.ticker, (newPrice, status) => {
+        this.updateTicker(currentTicker.ticker, newPrice, status);
       });
     },
 

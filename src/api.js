@@ -1,3 +1,6 @@
+//TODO Реализовать переподкиску на другую крипту если обмена крипта/USD нет, сделать переподписку на крипта/BTC и сделать перерасчет на USD
+//TODO Допилить реализацию с broadcastChannel, чтоб между вкладками тоже стабильно работало без проблем
+
 const API_KEY =
   '82111332b91e38e10885d9dceb7f328bd4c02617edd993940566cddd84458208';
 
@@ -9,21 +12,41 @@ const socket = new WebSocket(
 
 const AGREEGATE_INDEX = '5';
 
+const broadcastChannel = new BroadcastChannel('cryptonomicon');
+
 socket.addEventListener('message', (e) => {
-  const {
+  const currency = JSON.parse(e.data);
+
+  appendNewPrice(currency);
+  broadcastChannel.postMessage(e.data);
+});
+
+broadcastChannel.addEventListener('onmessage', (e) => {
+  appendNewPrice(e);
+});
+
+function appendNewPrice(data) {
+  let {
     TYPE: type,
     FROMSYMBOL: currency,
     PRICE: newPrice,
-  } = JSON.parse(e.data);
+    MESSAGE: message,
+    PARAMETER: parameter,
+  } = data;
 
-  if (!newPrice || type !== AGREEGATE_INDEX) {
+  let status = 'success';
+
+  if (message === 'INVALID_SUB') {
+    currency = parameter.split('~')[2];
+    status = 'error';
+  } else if (!newPrice || type !== AGREEGATE_INDEX) {
     return;
   }
 
   const handlers = tickersHandlers.get(currency) ?? [];
 
-  handlers.forEach((fn) => fn(newPrice));
-});
+  handlers.forEach((fn) => fn(newPrice, status));
+}
 
 function sendToWebSocket(message) {
   const stringifiedMessage = JSON.stringify(message);
