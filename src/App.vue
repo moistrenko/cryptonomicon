@@ -195,6 +195,7 @@ export default {
       tickers: [],
       selectedTicker: null,
       graph: [],
+      maxGraphElements: 10,
       coinsList: {},
       coinsFiltered: [],
       tickerInclude: false,
@@ -230,6 +231,15 @@ export default {
       this.coinsList = data.Data;
     });
   },
+
+  mounted() {
+    window.addEventListener('resize', this.calculateMaxGraphElements);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener('resize', this.calculateMaxGraphElements);
+  },
+
   computed: {
     startIndex() {
       return (this.page - 1) * 6;
@@ -274,6 +284,12 @@ export default {
     },
   },
   methods: {
+    calculateMaxGraphElements() {
+      if (!this.$refs.graph) return;
+
+      this.maxGraphElements = this.$refs.graph.clientWidth / 38;
+    },
+
     updateTicker(tickerName, price, status) {
       this.tickers
         .filter((t) => t.ticker === tickerName)
@@ -281,8 +297,8 @@ export default {
           if (t === this.selectedTicker) {
             this.graph.push(price);
 
-            if (this.graph.length > 10) {
-              this.graph.shift();
+            if (this.graph.length > this.maxGraphElements) {
+              this.graph = this.graph.slice(`-${this.maxGraphElements}`);
             }
           }
           t.price = price;
