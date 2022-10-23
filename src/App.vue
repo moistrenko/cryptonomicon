@@ -4,7 +4,10 @@
       class="container mx-auto min-h-screen flex flex-col items-center bg-gray-100 p-4"
     >
       <div class="container">
-        <add-ticker />
+        <add-ticker
+          @add-ticker="add"
+          :add-disabled="addDisabled"
+        />
         <template v-if="tickers.length">
           <hr class="w-full border-t border-gray-600 my-4" />
           <div>
@@ -122,7 +125,7 @@
 </template>
 
 <script>
-import { subscribeToTicker, unsubscribeFromTicker, getCoinsList } from './api';
+import { subscribeToTicker, unsubscribeFromTicker } from './api';
 import AddTicker from './components/AddTicker.vue';
 
 export default {
@@ -139,9 +142,7 @@ export default {
       selectedTicker: null,
       graph: [],
       maxGraphElements: 10,
-      coinsList: {},
-      // coinsFiltered: [],
-      // tickerInclude: false,
+      addDisabled: false,
       page: 1,
       filter: '',
     };
@@ -169,10 +170,6 @@ export default {
         });
       });
     }
-
-    getCoinsList().then((data) => {
-      this.coinsList = data.Data;
-    });
   },
 
   mounted() {
@@ -184,6 +181,11 @@ export default {
   },
 
   computed: {
+    // buttonDisabled() {
+    //   return this.tickers
+    //     .map((item) => item.ticker.toLowerCase())
+    //     .includes(this.ticker.toLowerCase());
+    // },
     startIndex() {
       return (this.page - 1) * 6;
     },
@@ -262,37 +264,44 @@ export default {
       this.add();
     },
 
-    // add() {
-    //   if (this.tickerInclude || !this.ticker) {
-    //     return;
-    //   }
+    add(ticker) {
+      if (this.checkIncludeTicker(ticker)) {
+        this.addDisabled = true;
+        return;
+      }
 
-    //   const currentTicker = { ticker: this.ticker, price: '-' };
+      if (!ticker) return;
 
-    //   this.tickers = [...this.tickers, currentTicker];
+      const currentTicker = { ticker: ticker, price: '-' };
 
-    //   this.filter = '';
-    //   this.ticker = '';
-    //   this.coinsFiltered = [];
+      this.tickers = [...this.tickers, currentTicker];
 
-    //   subscribeToTicker(currentTicker.ticker, (newPrice, status) => {
-    //     this.updateTicker(currentTicker.ticker, newPrice, status);
-    //   });
-    // },
+      this.filter = '';
 
-    // remove(tickerToRemove) {
-    //   this.tickers = this.tickers.filter(
-    //     (item) => item.ticker !== tickerToRemove,
-    //   );
+      subscribeToTicker(currentTicker.ticker, (newPrice, status) => {
+        this.updateTicker(currentTicker.ticker, newPrice, status);
+      });
+    },
 
-    //   if (
-    //     this.selectedTicker &&
-    //     this.selectedTicker.ticker === tickerToRemove
-    //   ) {
-    //     this.selectedTicker = null;
-    //   }
-    //   unsubscribeFromTicker(tickerToRemove);
-    // },
+    checkIncludeTicker(ticker) {
+      return this.tickers
+        .map((item) => item.ticker.toLowerCase())
+        .includes(ticker.toLowerCase());
+    },
+
+    remove(tickerToRemove) {
+      this.tickers = this.tickers.filter(
+        (item) => item.ticker !== tickerToRemove,
+      );
+
+      if (
+        this.selectedTicker &&
+        this.selectedTicker.ticker === tickerToRemove
+      ) {
+        this.selectedTicker = null;
+      }
+      unsubscribeFromTicker(tickerToRemove);
+    },
 
     select(ticker) {
       this.selectedTicker = ticker;
@@ -316,7 +325,7 @@ export default {
 
     selectedTicker() {
       this.graph = [];
-      this.$$nextTick().then(this.calculateMaxGraphElements);
+      this.$nextTick().then(this.calculateMaxGraphElements);
     },
 
     paginatedTickers() {
