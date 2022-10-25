@@ -42,7 +42,7 @@
     </div>
     <add-button
       class="my-4"
-      :add-disabled="addDisabled"
+      :button-disabled="addDisabled"
       @add="add"
     />
   </section>
@@ -82,21 +82,16 @@ export default {
   },
 
   methods: {
-    // coinsFilter() {
-    //   this.coinsFiltered = Object.keys(this.coinsList).filter((coin) =>
-    //     coin.toLowerCase().includes(this.ticker.toLowerCase()),
-    //   );
-
-    //   // this.tickerInclude = this.tickers
-    //   //   .map((item) => item.ticker.toLowerCase())
-    //   //   .includes(this.ticker.toLowerCase());
-    // },
-
     add() {
-      if (this.tickerInclude && !this.ticker) return;
+      if (!this.addDisabled && !this.ticker) return;
 
       this.$emit('add-ticker', this.ticker);
       this.ticker = '';
+    },
+
+    addedTicker(ticker) {
+      this.ticker = ticker;
+      this.add();
     },
   },
   computed: {
@@ -104,16 +99,19 @@ export default {
       return Object.keys(this.coinsList).filter((coin) =>
         coin.toLowerCase().includes(this.ticker.toLowerCase()),
       );
-
-      // this.tickerInclude = this.tickers
-      //   .map((item) => item.ticker.toLowerCase())
-      //   .includes(this.ticker.toLowerCase());
     },
+
     coinsFiltered() {
       return this.coinsFilter.slice(0, 4);
     },
+
     tickerLength() {
       return this.ticker.length;
+    },
+  },
+  watch: {
+    ticker() {
+      this.$emit('check-include-ticker', this.ticker);
     },
   },
 };

@@ -6,7 +6,8 @@
       <div class="container">
         <add-ticker
           @add-ticker="add"
-          :add-disabled="addDisabled"
+          @check-include-ticker="checkIncludeTicker"
+          :add-disabled="includeTicker"
         />
         <template v-if="tickers.length">
           <hr class="w-full border-t border-gray-600 my-4" />
@@ -137,12 +138,11 @@ export default {
 
   data() {
     return {
-      // ticker: '',
       tickers: [],
       selectedTicker: null,
       graph: [],
       maxGraphElements: 10,
-      addDisabled: false,
+      includeTicker: false,
       page: 1,
       filter: '',
     };
@@ -181,11 +181,6 @@ export default {
   },
 
   computed: {
-    // buttonDisabled() {
-    //   return this.tickers
-    //     .map((item) => item.ticker.toLowerCase())
-    //     .includes(this.ticker.toLowerCase());
-    // },
     startIndex() {
       return (this.page - 1) * 6;
     },
@@ -259,19 +254,7 @@ export default {
       return price > 1 ? price.toFixed(2) : price.toPrecision(2);
     },
 
-    addedTicker(ticker) {
-      this.ticker = ticker;
-      this.add();
-    },
-
     add(ticker) {
-      if (this.checkIncludeTicker(ticker)) {
-        this.addDisabled = true;
-        return;
-      }
-
-      if (!ticker) return;
-
       const currentTicker = { ticker: ticker, price: '-' };
 
       this.tickers = [...this.tickers, currentTicker];
@@ -284,7 +267,7 @@ export default {
     },
 
     checkIncludeTicker(ticker) {
-      return this.tickers
+      this.includeTicker = this.tickers
         .map((item) => item.ticker.toLowerCase())
         .includes(ticker.toLowerCase());
     },
@@ -306,16 +289,6 @@ export default {
     select(ticker) {
       this.selectedTicker = ticker;
     },
-
-    // coinsFilter() {
-    //   this.coinsFiltered = Object.keys(this.coinsList).filter((coin) =>
-    //     coin.toLowerCase().includes(this.ticker.toLowerCase()),
-    //   );
-
-    //   this.tickerInclude = this.tickers
-    //     .map((item) => item.ticker.toLowerCase())
-    //     .includes(this.ticker.toLowerCase());
-    // },
   },
 
   watch: {
