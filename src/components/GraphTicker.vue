@@ -9,9 +9,9 @@
     >
       <div
         v-for="(bar, i) in normalizedGraph"
-        :key="i"
+        :key="`graph-${i}-${bar}`"
         :style="{ height: `${bar}%` }"
-        class="bg-purple-800 border w-10"
+        class="graph-element bg-purple-800 border w-10"
       ></div>
     </div>
     <button
@@ -92,7 +92,11 @@ export default {
     calculateMaxGraphElements() {
       if (!this.$refs.graph) return;
 
-      this.maxGraphElements = this.$refs.graph.clientWidth / 38; //TODO вместо 38 нужно получить ширину элемента
+      const graphElement = this.$refs.graph.querySelector('.graph-element');
+
+      const widthGraphElement = graphElement ? graphElement.clientWidth : 38;
+
+      this.maxGraphElements = this.$refs.graph.clientWidth / widthGraphElement;
     },
 
     clearSelectedTicker() {
@@ -101,8 +105,11 @@ export default {
   },
 
   watch: {
-    graph() {
-      this.calculateMaxGraphElements();
+    graph: {
+      deep: true,
+      handler() {
+        this.calculateMaxGraphElements();
+      },
     },
   },
 
