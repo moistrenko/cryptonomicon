@@ -83,7 +83,7 @@ export default {
 
   methods: {
     add() {
-      if (!this.addDisabled && !this.ticker) return;
+      if (this.addDisabled || !this.ticker) return;
 
       this.$emit('add-ticker', this.ticker);
       this.ticker = '';

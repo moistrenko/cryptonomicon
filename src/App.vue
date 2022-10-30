@@ -40,7 +40,7 @@
               :ticker="t"
               :class="{
                 'border-4': selectedTicker === t,
-                'bg-red-800': t.status === 'error',
+                '!bg-red-800': t.status === 'error',
               }"
             />
           </dl>
@@ -58,7 +58,12 @@
 </template>
 
 <script>
-import { subscribeToTicker, unsubscribeFromTicker } from './api';
+import {
+  subscribeToTicker,
+  unsubscribeFromTicker,
+  setLocalStorage,
+  getLocalStorage,
+} from './api';
 import AddTicker from './components/AddTicker.vue';
 import GraphTicker from './components/GraphTicker.vue';
 import BaseTicker from './components/BaseTicker.vue';
@@ -95,7 +100,7 @@ export default {
       this.page = windowData.page;
     }
 
-    const tickersData = localStorage.getItem('cryptonomicon-list');
+    const tickersData = getLocalStorage();
 
     if (tickersData) {
       this.tickers = JSON.parse(tickersData);
@@ -195,7 +200,7 @@ export default {
 
   watch: {
     tickers() {
-      localStorage.setItem('cryptonomicon-list', JSON.stringify(this.tickers));
+      setLocalStorage(this.tickers);
     },
 
     selectedTicker() {

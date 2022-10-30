@@ -1,5 +1,5 @@
 //TODO Реализовать переподкиску на другую крипту если обмена крипта/USD нет, сделать переподписку на крипта/BTC и сделать перерасчет на USD
-//TODO Допилить реализацию с broadcastChannel, чтоб между вкладками тоже стабильно работало без проблем
+//TODO Доработать broadcoastChannel чтоб при обновлении страницы брались результаты езе и из LocalStorage
 
 const API_KEY =
   '82111332b91e38e10885d9dceb7f328bd4c02617edd993940566cddd84458208';
@@ -18,11 +18,12 @@ socket.addEventListener('message', (e) => {
   const currency = JSON.parse(e.data);
 
   appendNewPrice(currency);
-  broadcastChannel.postMessage(e.data);
+
+  broadcastChannel.postMessage(currency);
 });
 
-broadcastChannel.addEventListener('onmessage', (e) => {
-  appendNewPrice(e);
+broadcastChannel.addEventListener('message', (e) => {
+  appendNewPrice(e.data);
 });
 
 function appendNewPrice(data) {
@@ -47,6 +48,10 @@ function appendNewPrice(data) {
 
   handlers.forEach((fn) => fn(newPrice, status));
 }
+
+// function retrySubscribe(tickerName) {
+
+// }
 
 function sendToWebSocket(message) {
   const stringifiedMessage = JSON.stringify(message);
@@ -93,3 +98,11 @@ export const getCoinsList = () => {
     'https://min-api.cryptocompare.com/data/all/coinlist?summary=true',
   ).then((res) => res.json());
 };
+
+export function setLocalStorage(tickersList) {
+  localStorage.setItem('cryptonomicon-list', JSON.stringify(tickersList));
+}
+
+export function getLocalStorage() {
+  return localStorage.getItem('cryptonomicon-list');
+}
