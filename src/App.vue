@@ -11,25 +11,13 @@
         />
         <template v-if="tickers.length">
           <hr class="w-full border-t border-gray-600 my-4" />
-          <div>
-            <button
-              v-if="page > 1"
-              class="my-4 mx-2 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-              @click="page = page - 1"
-            >
-              Назад
-            </button>
-            <button
-              v-if="hasNextPage"
-              class="my-4 mx-2 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-              @click="page = page + 1"
-            >
-              Вперед
-            </button>
-            <div>
-              <input v-model="filter" />
-            </div>
-          </div>
+          <base-filter
+            :page="page"
+            :has-next-page="hasNextPage"
+            @prev-page="page = page - 1"
+            @next-page="page = page + 1"
+            @filter="filterChenge"
+          />
           <hr class="w-full border-t border-gray-600 my-4" />
           <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
             <base-ticker
@@ -67,6 +55,7 @@ import {
 import AddTicker from './components/AddTicker.vue';
 import GraphTicker from './components/GraphTicker.vue';
 import BaseTicker from './components/BaseTicker.vue';
+import BaseFilter from './components/BaseFilter.vue';
 
 export default {
   name: 'App',
@@ -75,6 +64,7 @@ export default {
     AddTicker,
     GraphTicker,
     BaseTicker,
+    BaseFilter,
   },
 
   data() {
@@ -87,6 +77,7 @@ export default {
       filter: '',
     };
   },
+
   created: function () {
     const windowData = Object.fromEntries(
       new URL(window.location).searchParams.entries(),
@@ -97,7 +88,7 @@ export default {
     }
 
     if (windowData.page) {
-      this.page = windowData.page;
+      this.page = Number(windowData.page);
     }
 
     const tickersData = getLocalStorage();
@@ -142,7 +133,12 @@ export default {
       };
     },
   },
+
   methods: {
+    filterChenge(value) {
+      this.filter = value;
+    },
+
     updateTicker(tickerName, price, status) {
       this.tickers
         .filter((t) => t.ticker === tickerName)
