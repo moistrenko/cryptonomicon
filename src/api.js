@@ -99,3 +99,7 @@ export function setLocalStorage(tickersList) {
 export function getLocalStorage() {
   return localStorage.getItem('cryptonomicon-list');
 }
+
+export const sendMessage = () => {
+  console.log('Ваше сообщение отправлено');
+};

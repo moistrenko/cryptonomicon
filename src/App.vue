@@ -9,6 +9,10 @@
           @check-include-ticker="checkIncludeTicker"
           :add-disabled="includeTicker"
         />
+        <base-button
+          text="Показать модалку"
+          @click="isShowModal = !isShowModal"
+        />
         <template v-if="tickers.length">
           <hr class="w-full border-t border-gray-600 my-4" />
           <base-filter
@@ -42,25 +46,46 @@
         />
       </div>
     </div>
+    <base-modal
+      v-if="isShowModal"
+      title="Заголовок"
+      @close-modal="isShowModal = !isShowModal"
+    >
+      <template #content>
+        <p class="text-center">Данная модалка представляется из себя модалку</p>
+      </template>
+      <template #btns>
+        <base-button
+          class="!block !mx-auto"
+          text="ОК"
+          @click="sendMessageModal"
+        />
+      </template>
+    </base-modal>
   </div>
 </template>
 
 <script>
-//TODO 4 Сделать модальное окно с 2 слотами и событиями закрывания по клику на фон
+//TODO 4 Сделать кросс-конвертацию подпиской на BTC-USD
 //TODO 3 Добавить пропсам required
-//TODO 3 Сделать кросс-конвертацию подпиской на BTC-USD
-//TOOD 2 Вынести логику в api.js
+//TODO 3 Переименовать все компоненты
+//TODO 3 Объеденить addButton и BaseButton через слоты
+//TODO 3 Сделать все импорты компонентов из одного файла как это в боевом проекте
+//TODO 2 Вынести логику в api.js
 //TODO 1 Переверстать сайт
 import {
   subscribeToTicker,
   unsubscribeFromTicker,
   setLocalStorage,
   getLocalStorage,
+  sendMessage,
 } from './api';
 import AddTicker from './components/AddTicker.vue';
 import GraphTicker from './components/GraphTicker.vue';
 import BaseTicker from './components/BaseTicker.vue';
 import BaseFilter from './components/BaseFilter.vue';
+import BaseModal from './components/BaseModal.vue';
+import BaseButton from './components/BaseButton.vue';
 
 export default {
   name: 'App',
@@ -70,6 +95,8 @@ export default {
     GraphTicker,
     BaseTicker,
     BaseFilter,
+    BaseModal,
+    BaseButton,
   },
 
   data() {
@@ -80,6 +107,7 @@ export default {
       includeTicker: false,
       page: 1,
       filter: '',
+      isShowModal: false,
     };
   },
 
@@ -140,6 +168,10 @@ export default {
   },
 
   methods: {
+    sendMessageModal() {
+      sendMessage();
+      this.isShowModal = !this.isShowModal;
+    },
     filterChenge(value) {
       this.filter = value;
     },
