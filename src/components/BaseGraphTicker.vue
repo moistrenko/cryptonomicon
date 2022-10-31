@@ -55,12 +55,14 @@ export default {
   props: {
     selectedTicker: {
       type: Object,
+      required: true,
       default() {
         return {};
       },
     },
     graph: {
       type: Array,
+      required: true,
       default() {
         return [];
       },

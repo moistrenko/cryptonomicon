@@ -39,6 +39,7 @@ export default {
   props: {
     ticker: {
       type: Object,
+      required: true,
       default() {
         return {};
       },

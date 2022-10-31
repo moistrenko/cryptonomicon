@@ -33,7 +33,7 @@
           </span>
         </div>
         <div
-          v-if="addDisabled"
+          v-if="tickerInclude"
           class="text-sm text-red-600"
         >
           Такой тикер уже добавлен
@@ -42,8 +42,8 @@
     </div>
     <base-button
       class="my-4"
-      :class="{ 'opacity-60': addDisabled }"
-      disabled="addDisabled"
+      :class="{ 'opacity-60': tickerInclude }"
+      :disabled="tickerInclude"
       @add="add"
     >
       <svg
@@ -82,11 +82,8 @@ export default {
   props: {
     tickerInclude: {
       type: Boolean,
+      required: true,
       default: false,
-    },
-    addDisabled: {
-      type: Boolean,
-      default: true,
     },
   },
 
@@ -98,7 +95,7 @@ export default {
 
   methods: {
     add() {
-      if (this.addDisabled || !this.ticker) return;
+      if (this.tickerInclude || !this.ticker) return;
 
       this.$emit('add-ticker', this.ticker);
       this.ticker = '';

@@ -2,19 +2,18 @@
   <div>
     <base-button
       v-if="page > 1"
-      text="Назад"
       @click="$emit('prev-page')"
-    />
+    >
+      Назад
+    </base-button>
     <base-button
       v-if="hasNextPage"
-      text="Вперед"
       @click="$emit('next-page')"
-    />
+    >
+      Вперед
+    </base-button>
     <div>
-      <input
-        :bind="filter"
-        @keyup="changeFilter"
-      />
+      <input @keyup="changeFilter" />
     </div>
   </div>
 </template>
@@ -30,14 +29,12 @@ export default {
   props: {
     page: {
       type: Number,
+      required: true,
       default: 0,
-    },
-    filter: {
-      type: String,
-      default: '',
     },
     hasNextPage: {
       type: Boolean,
+      required: true,
       default: false,
     },
   },

@@ -7,7 +7,7 @@
         <base-add-ticker
           @add-ticker="add"
           @check-include-ticker="checkIncludeTicker"
-          :add-disabled="includeTicker"
+          :ticker-include="includeTicker"
         />
         <base-button @click="isShowModal = !isShowModal">
           Показать модалку
@@ -19,7 +19,7 @@
             :has-next-page="hasNextPage"
             @prev-page="page = page - 1"
             @next-page="page = page + 1"
-            @filter="filterChenge"
+            @filter="filterChange"
           />
           <hr class="w-full border-t border-gray-600 my-4" />
           <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
@@ -66,7 +66,6 @@
 </template>
 
 <script>
-//TODO 3 Добавить пропсам required
 //TODO 2 Вынести логику в api.js
 //TODO 2 Повесить модалку на удаление крипты
 //TODO 2 Сделать кросс-конвертацию подпиской на BTC-USD
@@ -172,7 +171,7 @@ export default {
       sendMessage();
       this.isShowModal = !this.isShowModal;
     },
-    filterChenge(value) {
+    filterChange(value) {
       this.filter = value;
     },
 
