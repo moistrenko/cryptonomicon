@@ -1,6 +1,3 @@
-//TODO Реализовать переподкиску на другую крипту если обмена крипта/USD нет, сделать переподписку на крипта/BTC и сделать перерасчет на USD
-//TODO Доработать broadcoastChannel чтоб при обновлении страницы брались результаты езе и из LocalStorage
-
 const API_KEY =
   '82111332b91e38e10885d9dceb7f328bd4c02617edd993940566cddd84458208';
 
@@ -48,10 +45,6 @@ function appendNewPrice(data) {
 
   handlers.forEach((fn) => fn(newPrice, status));
 }
-
-// function retrySubscribe(tickerName) {
-
-// }
 
 function sendToWebSocket(message) {
   const stringifiedMessage = JSON.stringify(message);

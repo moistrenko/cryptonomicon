@@ -46,6 +46,11 @@
 </template>
 
 <script>
+//TODO 4 Сделать модальное окно с 2 слотами и событиями закрывания по клику на фон
+//TODO 3 Добавить пропсам required
+//TODO 3 Сделать кросс-конвертацию подпиской на BTC-USD
+//TOOD 2 Вынести логику в api.js
+//TODO 1 Переверстать сайт
 import {
   subscribeToTicker,
   unsubscribeFromTicker,
@@ -195,8 +200,11 @@ export default {
   },
 
   watch: {
-    tickers() {
-      setLocalStorage(this.tickers);
+    tickers: {
+      deep: true,
+      handler() {
+        setLocalStorage(this.tickers);
+      },
     },
 
     selectedTicker() {
