@@ -4,15 +4,14 @@
       class="container mx-auto min-h-screen flex flex-col items-center bg-gray-100 p-4"
     >
       <div class="container">
-        <add-ticker
+        <base-add-ticker
           @add-ticker="add"
           @check-include-ticker="checkIncludeTicker"
           :add-disabled="includeTicker"
         />
-        <base-button
-          text="Показать модалку"
-          @click="isShowModal = !isShowModal"
-        />
+        <base-button @click="isShowModal = !isShowModal">
+          Показать модалку
+        </base-button>
         <template v-if="tickers.length">
           <hr class="w-full border-t border-gray-600 my-4" />
           <base-filter
@@ -38,7 +37,7 @@
           </dl>
           <hr class="w-full border-t border-gray-600 my-4" />
         </template>
-        <graph-ticker
+        <base-graph-ticker
           v-if="selectedTicker"
           :selected-ticker="selectedTicker"
           :graph="graph"
@@ -57,21 +56,20 @@
       <template #btns>
         <base-button
           class="!block !mx-auto"
-          text="ОК"
           @click="sendMessageModal"
-        />
+        >
+          OK
+        </base-button>
       </template>
     </base-modal>
   </div>
 </template>
 
 <script>
-//TODO 4 Сделать кросс-конвертацию подпиской на BTC-USD
 //TODO 3 Добавить пропсам required
-//TODO 3 Переименовать все компоненты
-//TODO 3 Объеденить addButton и BaseButton через слоты
-//TODO 3 Сделать все импорты компонентов из одного файла как это в боевом проекте
 //TODO 2 Вынести логику в api.js
+//TODO 2 Повесить модалку на удаление крипты
+//TODO 2 Сделать кросс-конвертацию подпиской на BTC-USD
 //TODO 1 Переверстать сайт
 import {
   subscribeToTicker,
@@ -80,19 +78,21 @@ import {
   getLocalStorage,
   sendMessage,
 } from './api';
-import AddTicker from './components/AddTicker.vue';
-import GraphTicker from './components/GraphTicker.vue';
-import BaseTicker from './components/BaseTicker.vue';
-import BaseFilter from './components/BaseFilter.vue';
-import BaseModal from './components/BaseModal.vue';
-import BaseButton from './components/BaseButton.vue';
+import {
+  BaseAddTicker,
+  BaseGraphTicker,
+  BaseTicker,
+  BaseFilter,
+  BaseModal,
+  BaseButton,
+} from './components/index.js';
 
 export default {
   name: 'App',
 
   components: {
-    AddTicker,
-    GraphTicker,
+    BaseAddTicker,
+    BaseGraphTicker,
     BaseTicker,
     BaseFilter,
     BaseModal,
