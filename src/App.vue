@@ -66,6 +66,8 @@
 </template>
 
 <script>
+//TODO 5 Поправить модалку аналогично видео
+//TODO 4 Добавить поле emits в компоненты
 //TODO 2 Вынести логику в api.js
 //TODO 2 Повесить модалку на удаление крипты
 //TODO 2 Сделать кросс-конвертацию подпиской на BTC-USD
@@ -77,6 +79,7 @@ import {
   getLocalStorage,
   sendMessage,
 } from './api';
+
 import {
   BaseAddTicker,
   BaseGraphTicker,
