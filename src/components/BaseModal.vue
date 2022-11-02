@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="isShowModal"
     class="flex justify-center items-center absolute top-0 left-0 right-0 bottom-0 bg-[rgba(0,0,0,.4)] cursor-pointer"
     @click.self="$emit('close-modal')"
   >
@@ -30,10 +31,29 @@ export default {
       type: String,
       default: '',
     },
+    isShowModal: {
+      type: Boolean,
+      required: true,
+    },
   },
 
   emits: {
     'close-modal': null,
+  },
+
+  mounted() {
+    document.addEventListener('keyup', this.handleKeydown);
+  },
+  beforeUnmount() {
+    document.removeEventListener('keyup', this.handleKeydown);
+  },
+
+  methods: {
+    handleKeydown(e) {
+      if (this.isShowModal && e.key == 'Escape') {
+        this.$emit('close-modal');
+      }
+    },
   },
 };
 </script>

@@ -46,7 +46,7 @@
       </div>
     </div>
     <base-modal
-      v-if="isShowModal"
+      :is-show-modal="isShowModal"
       title="Заголовок"
       @close-modal="isShowModal = !isShowModal"
     >
@@ -67,11 +67,10 @@
 
 <script>
 //TODO 5 Поправить модалку аналогично видео
-//TODO 4 Добавить поле emits в компоненты
+//TODO 3 Переверстать сайт
 //TODO 2 Вынести логику в api.js
 //TODO 2 Повесить модалку на удаление крипты
-//TODO 2 Сделать кросс-конвертацию подпиской на BTC-USD
-//TODO 1 Переверстать сайт
+//TODO 1 Сделать кросс-конвертацию подпиской на BTC-USD
 import {
   subscribeToTicker,
   unsubscribeFromTicker,
