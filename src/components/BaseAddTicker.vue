@@ -44,7 +44,7 @@
       class="my-4"
       :class="{ 'opacity-60': tickerInclude }"
       :disabled="tickerInclude"
-      @add="add"
+      @click="add"
     >
       <svg
         class="-ml-0.5 mr-2 h-6 w-6"
@@ -77,6 +77,11 @@ export default {
       ticker: '',
       coinsList: {},
     };
+  },
+
+  emits: {
+    'add-ticker': null,
+    'check-include-ticker': null,
   },
 
   props: {

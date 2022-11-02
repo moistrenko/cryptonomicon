@@ -69,6 +69,10 @@ export default {
     },
   },
 
+  emits: {
+    'clear-selected-ticker': null,
+  },
+
   computed: {
     normalizedGraph() {
       const maxValue = Math.max(...this.updateMaxGraphElements);

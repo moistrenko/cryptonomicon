@@ -46,6 +46,11 @@ export default {
     },
   },
 
+  emits: {
+    remove: null,
+    'select-graph': null,
+  },
+
   methods: {
     remove(ticker) {
       this.$emit('remove', ticker);

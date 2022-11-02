@@ -22,3 +22,18 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  props: {
+    title: {
+      type: String,
+      default: '',
+    },
+  },
+
+  emits: {
+    'close-modal': null,
+  },
+};
+</script>

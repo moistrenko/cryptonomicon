@@ -39,6 +39,12 @@ export default {
     },
   },
 
+  emits: {
+    filter: null,
+    'prev-page': null,
+    'next-page': null,
+  },
+
   methods: {
     changeFilter(event) {
       this.$emit('filter', event.target.value);
