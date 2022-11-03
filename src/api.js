@@ -100,6 +100,6 @@ export function getLocalStorage() {
   return localStorage.getItem('cryptonomicon-list');
 }
 
-export function sendMessage() {
+export function sendMessageApi() {
   console.log('Ваше сообщение отправлено');
 }

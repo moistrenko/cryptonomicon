@@ -9,9 +9,7 @@
           @check-include-ticker="checkIncludeTicker"
           :ticker-include="includeTicker"
         />
-        <base-button @click="isShowModal = !isShowModal">
-          Показать модалку
-        </base-button>
+        <base-button @click="openModal"> Показать модалку </base-button>
         <template v-if="tickers.length">
           <hr class="w-full border-t border-gray-600 my-4" />
           <base-filter
@@ -46,19 +44,15 @@
       </div>
     </div>
     <base-modal
-      :is-show-modal="isShowModal"
+      v-model="modelValue"
       title="Заголовок"
-      @close-modal="isShowModal = !isShowModal"
     >
-      <template #content>
-        <p class="text-center">Данная модалка представляется из себя модалку</p>
-      </template>
-      <template #btns>
+      <template #actions="{ close }">
         <base-button
-          class="!block !mx-auto"
-          @click="sendMessageModal"
+          class="!block !mx-auto min-w-[100px]"
+          @click="close"
         >
-          OK
+          Отмена
         </base-button>
       </template>
     </base-modal>
@@ -67,16 +61,15 @@
 
 <script>
 //TODO 5 Поправить модалку аналогично видео
+//TODO 4 Повесить модалку на удаление крипты
 //TODO 3 Переверстать сайт
 //TODO 2 Вынести логику в api.js
-//TODO 2 Повесить модалку на удаление крипты
 //TODO 1 Сделать кросс-конвертацию подпиской на BTC-USD
 import {
   subscribeToTicker,
   unsubscribeFromTicker,
   setLocalStorage,
   getLocalStorage,
-  sendMessage,
 } from './api';
 
 import {
@@ -108,7 +101,7 @@ export default {
       includeTicker: false,
       page: 1,
       filter: '',
-      isShowModal: false,
+      modelValue: false,
     };
   },
 
@@ -169,10 +162,10 @@ export default {
   },
 
   methods: {
-    sendMessageModal() {
-      sendMessage();
-      this.isShowModal = !this.isShowModal;
+    openModal() {
+      this.modelValue = true;
     },
+
     filterChange(value) {
       this.filter = value;
     },
