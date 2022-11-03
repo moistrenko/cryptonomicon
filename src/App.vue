@@ -9,7 +9,9 @@
           @check-include-ticker="checkIncludeTicker"
           :ticker-include="includeTicker"
         />
+
         <base-button @click="openModal"> Показать модалку </base-button>
+
         <template v-if="tickers.length">
           <hr class="w-full border-t border-gray-600 my-4" />
           <base-filter
@@ -35,6 +37,7 @@
           </dl>
           <hr class="w-full border-t border-gray-600 my-4" />
         </template>
+
         <base-graph-ticker
           v-if="selectedTicker"
           :selected-ticker="selectedTicker"
@@ -43,6 +46,7 @@
         />
       </div>
     </div>
+
     <base-modal
       v-model="modelValue"
       title="Заголовок"
@@ -60,11 +64,12 @@
 </template>
 
 <script>
-//TODO 5 Поправить модалку аналогично видео
-//TODO 4 Повесить модалку на удаление крипты
+//TODO 4 Повесить модалку на удаление крипты (Скорее всего надо использовать provide/inject)
+//TODO 4 После того как модалка будет повешана на удаление крипты, удалить кнопку и импорт компонента
 //TODO 3 Переверстать сайт
 //TODO 2 Вынести логику в api.js
-//TODO 1 Сделать кросс-конвертацию подпиской на BTC-USD
+//TODO 2 Установить tailwind и удалить файл tailwind'а
+//TODO 1 Сделать кросс-конвертацию подпиской на BTC-USD, если крипта-USD не существует
 import {
   subscribeToTicker,
   unsubscribeFromTicker,
