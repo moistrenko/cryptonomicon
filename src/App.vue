@@ -48,7 +48,7 @@
     </div>
 
     <base-modal
-      v-model="modelValue"
+      v-model="modalOpen"
       title="Заголовок"
     >
       <template #actions="{ close }">
@@ -106,7 +106,7 @@ export default {
       includeTicker: false,
       page: 1,
       filter: '',
-      modelValue: false,
+      modalOpen: false,
     };
   },
 
@@ -168,7 +168,7 @@ export default {
 
   methods: {
     openModal() {
-      this.modelValue = true;
+      this.modalOpen = true;
     },
 
     filterChange(value) {
