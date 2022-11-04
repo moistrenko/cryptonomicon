@@ -1,7 +1,7 @@
 <template>
   <div
     @click="selectGraph(ticker)"
-    class="bg-white overflow-hidden shadow rounded-lg border-purple-800 border-solid cursor-pointer"
+    class="bg-amber-300 overflow-hidden shadow rounded-lg border-purple-800 border-solid cursor-pointer"
   >
     <div class="px-4 py-5 sm:p-6 text-center">
       <dt class="text-sm font-medium text-gray-500 truncate">
@@ -14,13 +14,12 @@
     <div class="w-full border-t border-gray-200"></div>
     <button
       @click.stop="remove(ticker.ticker)"
-      class="flex items-center justify-center font-medium w-full bg-gray-100 px-4 py-4 sm:px-6 text-md text-gray-500 hover:text-gray-600 hover:bg-gray-200 hover:opacity-20 transition-all focus:outline-none"
+      class="flex items-center justify-center font-medium w-full bg-amber-400 px-4 py-4 sm:px-6 text-md text-gray-500 hover:text-white hover:bg-amber-700 transition-all focus:outline-none"
     >
       <svg
-        class="h-5 w-5"
+        class="h-5 w-5 fill-[#718096] !hover:fill-white"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"
-        fill="#718096"
         aria-hidden="true"
       >
         <path

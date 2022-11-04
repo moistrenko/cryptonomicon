@@ -5,7 +5,7 @@
     @click.self="close"
   >
     <div
-      class="modal flex flex-col justify-between relative w-96 h-96 bg-white rounded-xl p-6 cursor-default"
+      class="modal flex flex-col justify-between relative w-96 h-96 bg-amber-300 rounded-xl p-6 cursor-default"
     >
       <div
         class="close absolute top-1 right-2 cursor-pointer"

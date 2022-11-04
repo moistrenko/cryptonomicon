@@ -1,7 +1,7 @@
 <template>
-  <div id="app">
+  <div>
     <div
-      class="container mx-auto min-h-screen flex flex-col items-center bg-gray-100 p-4"
+      class="mx-auto min-h-screen flex flex-col items-center p-4 bg-[url('./bg.jpg')] bg-cover"
     >
       <div class="container">
         <base-add-ticker
@@ -13,7 +13,7 @@
         <base-button @click="openModal"> Показать модалку </base-button>
 
         <template v-if="tickers.length">
-          <hr class="w-full border-t border-gray-600 my-4" />
+          <hr class="w-full border-t border-white my-4" />
           <base-filter
             :page="page"
             :has-next-page="hasNextPage"
@@ -21,7 +21,7 @@
             @next-page="page = page + 1"
             @filter="filterChange"
           />
-          <hr class="w-full border-t border-gray-600 my-4" />
+          <hr class="w-full border-t border-white my-4" />
           <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
             <base-ticker
               v-for="t in paginatedTickers"
@@ -35,7 +35,7 @@
               }"
             />
           </dl>
-          <hr class="w-full border-t border-gray-600 my-4" />
+          <hr class="w-full border-t border-white my-4" />
         </template>
 
         <base-graph-ticker
@@ -66,7 +66,7 @@
 <script>
 //TODO 4 Повесить модалку на удаление крипты (Скорее всего надо использовать provide/inject)
 //TODO 4 После того как модалка будет повешана на удаление крипты, удалить кнопку и импорт компонента
-//TODO 3 Переверстать сайт
+//TODO Возможно сломался грифик
 //TODO 2 Вынести логику в api.js
 //TODO 2 Установить tailwind и удалить файл tailwind'а
 //TODO 1 Сделать кросс-конвертацию подпиской на BTC-USD, если крипта-USD не существует
@@ -146,7 +146,7 @@ export default {
 
     filteredTickers() {
       return this.tickers.filter((ticker) =>
-        ticker.ticker.includes(this.filter),
+        ticker.ticker.toLowerCase().includes(this.filter.toLowerCase()),
       );
     },
 

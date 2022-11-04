@@ -13,7 +13,11 @@
       Вперед
     </base-button>
     <div>
-      <input @keyup="changeFilter" />
+      <input
+        class="p-2 rounded"
+        @keyup="changeFilter"
+        placeholder="Фильтр"
+      />
     </div>
   </div>
 </template>
