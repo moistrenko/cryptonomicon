@@ -1,14 +1,14 @@
 <template>
   <div
     v-if="modelValue"
-    class="flex justify-center items-center absolute top-0 left-0 right-0 bottom-0 bg-[rgba(0,0,0,.4)] cursor-pointer"
+    class="flex justify-center items-center absolute top-0 left-0 right-0 bottom-0 bg-[rgba(0,0,0,.7)] cursor-pointer"
     @click.self="close"
   >
     <div
       class="modal flex flex-col justify-between relative w-96 h-96 bg-amber-300 rounded-xl p-6 cursor-default"
     >
       <div
-        class="close absolute top-1 right-2 cursor-pointer"
+        class="close absolute top-3 right-4 cursor-pointer font-bold text-xl"
         @click="close"
       >
         X
