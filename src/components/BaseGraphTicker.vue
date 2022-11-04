@@ -98,11 +98,7 @@ export default {
     calculateMaxGraphElements() {
       if (!this.$refs.graph) return;
 
-      const graphElement = this.$refs.graph.querySelector('.graph-element');
-
-      const widthGraphElement = graphElement ? graphElement.clientWidth : 38;
-
-      this.maxGraphElements = this.$refs.graph.clientWidth / widthGraphElement;
+      this.maxGraphElements = this.$refs.graph.clientWidth / 38;
     },
 
     clearSelectedTicker() {
