@@ -69,9 +69,6 @@
 </template>
 
 <script>
-//TODO 2 Вынести логику в api.js
-//TODO 2 Установить tailwind и удалить файл tailwind'а
-//TODO 1 Сделать кросс-конвертацию подпиской на BTC-USD, если крипта-USD не существует
 import {
   subscribeToTicker,
   unsubscribeFromTicker,
